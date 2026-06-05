@@ -141,3 +141,15 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 .vite/
+
+# Environment
+
+
+# Python
+ml-service/venv/
+ml-service/__pycache__/
+*.pkl
+*.pyc
+
+# Vite
+client/dist/
