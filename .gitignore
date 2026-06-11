@@ -153,3 +153,4 @@ ml-service/__pycache__/
 
 # Vite
 client/dist/
+ml-service/data/
