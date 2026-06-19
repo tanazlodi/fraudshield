@@ -12,12 +12,12 @@ router.get('/', async (req, res) => {
     const limit = parseInt(req.query.limit) || 20
     const skip = (page - 1) * limit
 
-    const transactions = await Transaction.find()
+    const transactions = await Transaction.find({ userId: req.user?._id })
       .sort({ timestamp: -1 })
       .skip(skip)
       .limit(limit)
 
-    const total = await Transaction.countDocuments()
+    const total = await Transaction.countDocuments({ userId: req.user?._id })
 
     res.json({
       transactions,
@@ -45,7 +45,7 @@ router.get('/:id', async (req, res) => {
 router.post('/', async (req, res) => {
   try {
     // Save transaction as pending
-    const transaction = new Transaction(req.body)
+    const transaction = new Transaction({ ...req.body, userId: req.user?._id })
     await transaction.save()
 
     // Send to ML service for scoring
@@ -71,7 +71,7 @@ router.post('/', async (req, res) => {
 // GET /api/transactions/flagged - only fraudulent transactions
 router.get('/filter/flagged', async (req, res) => {
   try {
-    const flagged = await Transaction.find({ flagged: true }).sort({ timestamp: -1 }).limit(50)
+    const flagged = await Transaction.find({ flagged: true, userId: req.user?._id }).sort({ timestamp: -1 }).limit(50)
     res.json(flagged)
   } catch (err) {
     res.status(500).json({ error: err.message })

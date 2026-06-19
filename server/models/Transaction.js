@@ -51,6 +51,11 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     enum: ['pending', 'scored', 'reviewed'],
     default: 'pending'
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: false
   }
 }, {
   timestamps: true // adds createdAt and updatedAt automatically

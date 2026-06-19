@@ -7,6 +7,7 @@ const { Server } = require('socket.io')
 
 const transactionRoutes = require('./routes/transactions')
 const analyticsRoutes = require('./routes/analytics')
+const authRoutes = require('./routes/auth')
 const initSocket = require('./socket/index')
 
 const app = express()
@@ -23,8 +24,11 @@ app.use(cors())
 app.use(express.json())
 
 // Routes
-app.use('/api/transactions', transactionRoutes(io))
-app.use('/api/analytics', analyticsRoutes)
+const authenticate = require('./middleware/authenticate')
+
+app.use('/api/auth', authRoutes)
+app.use('/api/transactions', (req, res, next) => authenticate(req, res, next), transactionRoutes(io))
+app.use('/api/analytics', (req, res, next) => authenticate(req, res, next), analyticsRoutes)
 
 // Health check
 app.get('/', (req, res) => {
