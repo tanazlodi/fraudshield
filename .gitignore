@@ -154,3 +154,6 @@ ml-service/__pycache__/
 # Vite
 client/dist/
 ml-service/data/
+
+.DS_Store
+**/.DS_Store
