@@ -1,14 +1,19 @@
 import { useState, useEffect } from 'react'
-import { getSummary } from '../services/api'
+import { getSummary, getByCategory } from '../services/api'
 import { useAuth } from '../context/AuthContext'
 import { useSocket } from '../hooks/useSocket'
 import StatCard from '../components/StatCard'
 import LiveFeed from '../components/LiveFeed'
+import FraudRateChart from '../components/FraudRateChart'
+import ScoreDistribution from '../components/ScoreDistribution'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 
 export default function Dashboard() {
   const { user } = useAuth()
   const [summary, setSummary] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [categories, setCategories] = useState([])
+  const [loadingSummary, setLoadingSummary] = useState(true)
+  const [loadingCategories, setLoadingCategories] = useState(true)
 
   const fetchSummary = async () => {
     try {
@@ -17,18 +22,35 @@ export default function Dashboard() {
     } catch (err) {
       console.error('Failed to fetch summary:', err)
     } finally {
-      setLoading(false)
+      setLoadingSummary(false)
     }
   }
 
-  // Load summary on mount
+  const fetchCategories = async () => {
+    try {
+      const response = await getByCategory()
+      const formatted = response.data.map((item) => ({
+        category: item.category,
+        fraudRate: parseFloat(item.fraudRate.toFixed(2))
+      }))
+      setCategories(formatted)
+    } catch (err) {
+      console.error('Failed to fetch categories:', err)
+    } finally {
+      setLoadingCategories(false)
+    }
+  }
+
   useEffect(() => {
     fetchSummary()
+    fetchCategories()
   }, [])
 
-  // Refresh summary every time a new transaction comes in
   useSocket(
-    () => fetchSummary(),
+    () => {
+      fetchSummary()
+      fetchCategories()
+    },
     null
   )
 
@@ -50,7 +72,7 @@ export default function Dashboard() {
         </div>
 
         {/* Stat Cards */}
-        {loading ? (
+        {loadingSummary ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => (
               <div key={i} className="bg-gray-900 rounded-xl border border-gray-800 p-5 animate-pulse">
@@ -87,6 +109,37 @@ export default function Dashboard() {
             />
           </div>
         )}
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <FraudRateChart />
+          <ScoreDistribution />
+        </div>
+
+        {/* Fraud by Category */}
+        <div className="bg-gray-900 rounded-xl border border-gray-800 p-6">
+          <h2 className="text-white font-semibold mb-4">Fraud Rate by Category</h2>
+          {loadingCategories ? (
+            <div className="h-48 bg-gray-800 rounded animate-pulse" />
+          ) : categories.length === 0 ? (
+            <p className="text-gray-500 text-sm">No data yet.</p>
+          ) : (
+            <ResponsiveContainer width="100%" height={250}>
+              <BarChart data={categories}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#1f2937" />
+                <XAxis dataKey="category" tick={{ fill: '#6b7280', fontSize: 11 }} />
+                <YAxis tick={{ fill: '#6b7280', fontSize: 11 }} unit="%" />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#111827', border: '1px solid #1f2937', borderRadius: '8px' }}
+                  labelStyle={{ color: '#f9fafb' }}
+                  itemStyle={{ color: '#f59e0b' }}
+                  formatter={(value) => [`${value}%`, 'Fraud Rate']}
+                />
+                <Bar dataKey="fraudRate" fill="#f59e0b" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          )}
+        </div>
 
         {/* Live Feed */}
         <LiveFeed />
