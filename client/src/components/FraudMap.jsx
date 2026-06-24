@@ -3,12 +3,13 @@ import { MapContainer, TileLayer, CircleMarker, Tooltip } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import { getFraudLocations } from '../services/api'
 
-export default function FraudMap() {
+export default function FraudMap({ refreshTrigger }) {
   const [locations, setLocations] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const fetch = async () => {
+
       try {
         const response = await getFraudLocations()
         setLocations(response.data)
@@ -19,7 +20,7 @@ export default function FraudMap() {
       }
     }
     fetch()
-  }, [])
+  }, [refreshTrigger])
 
   // Group locations by city and count fraud per city
   const cityData = locations.reduce((acc, point) => {

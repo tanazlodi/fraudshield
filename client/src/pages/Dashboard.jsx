@@ -16,6 +16,8 @@ export default function Dashboard() {
   const [categories, setCategories] = useState([])
   const [loadingSummary, setLoadingSummary] = useState(true)
   const [loadingCategories, setLoadingCategories] = useState(true)
+  const [mapRefresh, setMapRefresh] = useState(0)
+
 
   const fetchSummary = async () => {
     try {
@@ -49,12 +51,14 @@ export default function Dashboard() {
   }, [])
 
   useSocket(
-    () => {
-      fetchSummary()
-      fetchCategories()
-    },
-    null
-  )
+  () => {
+    fetchSummary()
+    fetchCategories()
+  },
+  () => {
+    setMapRefresh(prev => prev + 1)
+  }
+)
 
   const formatCurrency = (amount) =>
     `$${(amount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
@@ -144,7 +148,7 @@ export default function Dashboard() {
         </div>
 
         {/* Fraud Map */}
-        <FraudMap />
+        <FraudMap refreshTrigger={mapRefresh} />
 
         {/* Live Feed */}
         <LiveFeed />
