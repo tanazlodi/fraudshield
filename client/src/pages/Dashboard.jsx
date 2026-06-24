@@ -7,6 +7,8 @@ import LiveFeed from '../components/LiveFeed'
 import FraudRateChart from '../components/FraudRateChart'
 import ScoreDistribution from '../components/ScoreDistribution'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+import FraudMap from '../components/FraudMap'
+
 
 export default function Dashboard() {
   const { user } = useAuth()
@@ -140,6 +142,9 @@ export default function Dashboard() {
             </ResponsiveContainer>
           )}
         </div>
+
+        {/* Fraud Map */}
+        <FraudMap />
 
         {/* Live Feed */}
         <LiveFeed />

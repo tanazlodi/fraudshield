@@ -47,5 +47,6 @@ export const getSummary = () => api.get('/analytics/summary')
 export const getFraudOverTime = () => api.get('/analytics/fraud-over-time')
 export const getByCategory = () => api.get('/analytics/by-category')
 export const getScoreDistribution = () => api.get('/analytics/score-distribution')
+export const getFraudLocations = () => api.get('/analytics/fraud-locations')
 
 export default api

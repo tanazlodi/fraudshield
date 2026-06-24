@@ -106,4 +106,26 @@ router.get('/score-distribution', async (req, res) => {
   }
 })
 
+// GET /api/analytics/fraud-locations - lat/lng of all flagged transactions
+router.get('/fraud-locations', async (req, res) => {
+  try {
+    const locations = await Transaction.find(
+      { flagged: true, userId: req.user?._id, 'location.lat': { $exists: true } },
+      { 'location.lat': 1, 'location.lng': 1, 'location.city': 1, amount: 1, fraudScore: 1 }
+    )
+
+    const points = locations.map((tx) => ({
+      lat: tx.location.lat,
+      lng: tx.location.lng,
+      city: tx.location.city,
+      amount: tx.amount,
+      fraudScore: tx.fraudScore
+    }))
+
+    res.json(points)
+  } catch (err) {
+    res.status(500).json({ error: err.message })
+  }
+})
+
 module.exports = router
