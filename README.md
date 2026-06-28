@@ -150,7 +150,7 @@ Fill in your values:
 
 ```env
 PORT=5001
-MONGO_URI=mongodb+srv://your_user:your_password@your_cluster.mongodb.net/fraudshield
+MONGO_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/fraudshield
 ML_SERVICE_URL=http://localhost:8000
 JWT_SECRET=your_secret_key_here
 MODEL_PATH=./model/fraud_model.pkl
