@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const BASE_URL = 'http://localhost:5001/api'
+const BASE_URL = 'https://fraudshield-api-d01d.onrender.com/api'
 
 // Create axios instance with base config
 const api = axios.create({

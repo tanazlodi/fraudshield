@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { io } from 'socket.io-client'
 
-const SOCKET_URL = 'http://localhost:5001'
+const SOCKET_URL = 'https://fraudshield-api-d01d.onrender.com'
 
 export const useSocket = (onNewTransaction, onFraudAlert) => {
   const socketRef = useRef(null)
