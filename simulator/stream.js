@@ -1,7 +1,7 @@
 const axios = require('axios')
 
-const API_URL = 'http://localhost:5001/api/transactions'
-const AUTH_URL = 'http://localhost:5001/api/auth/login'
+const API_URL = 'https://fraudshield-api-d01d.onrender.com/api/transactions'
+const AUTH_URL = 'https://fraudshield-api-d01d.onrender.com/api/auth/login'
 
 // Credentials for the simulator user
 const SIMULATOR_CREDENTIALS = {
